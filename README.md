@@ -1,3 +1,4 @@
+
 # 🧹 Automação para Limpeza de Perfis de Usuários do Domínio
 
 ## 📌 Descrição
@@ -52,3 +53,69 @@ foreach ($usuario in $usuarios) {
         Add-Content $logPath "[$(Get-Date)] ERRO ao remover: $($usuario.LocalPath)"
     }
 }
+```
+
+3. Salve como `limpar_perfis.ps1` dentro da pasta `C:\Scripts`.
+
+---
+
+### 2. Desativar Inicialização Rápida
+
+1. Acesse o **Painel de Controle > Opções de Energia**.
+2. Clique em **Escolher a função dos botões de energia**.
+3. Clique em **Alterar configurações não disponíveis no momento**.
+4. Desmarque a opção **Ligar inicialização rápida (recomendado)**.
+5. Salve as alterações.
+
+---
+
+### 3. Criar a Tarefa Agendada
+
+Abra o **Prompt de Comando como Administrador** e execute:
+
+```cmd
+SCHTASKS /Create /TN "LimpezaPerfis" /TR "powershell.exe -ExecutionPolicy Bypass -File C:\Scripts\limpar_perfis.ps1" /SC ONSTART /RU "SYSTEM" /F
+```
+
+> ⚠️ O comando deve ser executado em uma única linha.
+
+---
+
+### 4. Ajustar a Tarefa no Agendador
+
+1. Digite `taskschd.msc` no **Executar (Win + R)** e pressione Enter.
+2. Vá até **Biblioteca do Agendador de Tarefas**.
+3. Clique com o botão direito em `LimpezaPerfis` > **Propriedades**.
+4. Na aba **Geral**:
+   - Marque **Executar com os privilégios mais altos**.
+   - Configure para a versão correta do Windows.
+
+---
+
+### 5. Testar a Execução
+
+1. Reinicie o computador.
+2. Verifique o arquivo de log: `C:\Scripts\log_limpeza.txt`.
+
+---
+
+### 6. Proteger a Pasta do Script
+
+1. Clique com o botão direito em `C:\Scripts` > **Propriedades**.
+2. Aba **Segurança** > **Editar**.
+3. Remova ou negue permissões para usuários comuns.
+4. Mantenha acesso apenas para **Administradores** e **Sistema**.
+
+---
+
+## ▶️ Execução Manual (opcional)
+
+```cmd
+SCHTASKS /Run /TN "LimpezaPerfis"
+```
+
+---
+
+## 🧠 Considerações Finais
+
+Essa solução tem se mostrado eficaz em ambientes compartilhados, evitando o acúmulo desnecessário de dados e mantendo os computadores performáticos e organizados. Ideal para instituições de ensino, laboratórios, bibliotecas ou qualquer local onde o login de múltiplos usuários seja frequente.
